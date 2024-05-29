@@ -9,7 +9,7 @@
           <input
             ref="inputRef"
             type="text"
-            :placeholder="placeholder ?? 'Ingrese un valor'"
+            :placeholder="placeholder ?? 'Add a value'"
             class="flex-1 w-full input input-bordered input-primary"
             v-model="inputValue"
           />
@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 type Props = {
   open: boolean;
@@ -39,7 +39,7 @@ type Props = {
   placeholder?: string;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const emits = defineEmits<{
   close: [void];
@@ -49,13 +49,21 @@ const emits = defineEmits<{
 const inputValue = ref('');
 const inputRef = ref<HTMLInputElement | null>(null);
 
+watch(props, ({ open }) => {
+  if (open) {
+    inputRef.value?.focus();
+  }
+});
+
 const submitValue = () => {
   if (!inputValue.value) {
     inputRef.value?.focus();
     return;
   }
 
-  emits('value', inputValue.value);
+  emits('value', inputValue.value.trim());
   emits('close');
+
+  inputValue.value = '';
 };
 </script>

@@ -5,17 +5,29 @@
       <thead>
         <tr>
           <th></th>
-          <th>Proyecto</th>
-          <th>Tareas</th>
-          <th>Avance</th>
+          <th>Project</th>
+          <th>Tasks</th>
+          <th>Progress</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="hover">
-          <th>2</th>
-          <td>Hart Hagerty</td>
-          <td>Desktop Support Technician</td>
-          <td>Purple</td>
+        <tr
+          v-for="(project, index) in projectsStore.projectsWithCompletion"
+          :key="project.id"
+          class="hover"
+        >
+          <th>{{ index + 1 }}</th>
+          <td>
+            <span @dblclick="console.log('dbclick')">{{ project.name }}</span>
+          </td>
+          <td>{{ project.taskCount }}</td>
+          <td>
+            <progress
+              class="progress progress-primary w-56"
+              :value="project.completion"
+              max="100"
+            ></progress>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -24,15 +36,15 @@
   <input-modal
     :open="modalOpen"
     @close="modalOpen = false"
-    @value="onNewValue"
-    placeholder="Ingrese el nombre del proyecto"
-    title="Nuevo proyecto"
-    sub-title="Dale un nombre único a tu proyecto"
+    @value="projectsStore.addProject"
+    placeholder="Enter project name"
+    title="New project"
+    sub-title="Enter the name of the new project"
   />
 
   <custom-modal :open="customModalOpen">
     <template #header>
-      <h1 class="text-3xl">Titulo del modal</h1>
+      <h1 class="text-3xl">Modal title</h1>
     </template>
 
     <template #body>
@@ -44,7 +56,7 @@
     <template #footer>
       <div class="flex justify-end">
         <button @click="customModalOpen = false" class="mr-4 btn">Close</button>
-        <button @click="customModalOpen = false" class="btn btn-primary">Aceptar</button>
+        <button @click="customModalOpen = false" class="btn btn-primary">Accept</button>
       </div>
     </template>
   </custom-modal>
@@ -65,11 +77,10 @@ import FabButton from '@/modules/common/components/FabButton.vue';
 import InputModal from '@/modules/common/components/InputModal.vue';
 import AddCircle from '@/modules/common/icons/AddCircle.vue';
 import ModalIcon from '@/modules/common/icons/ModalIcon.vue';
+import { useProjectsStore } from '@/modules/projects/store/projects.store';
 
 const modalOpen = ref(false);
 const customModalOpen = ref(false);
 
-const onNewValue = (projectName: string) => {
-  console.log({ projectName });
-};
+const projectsStore = useProjectsStore();
 </script>
